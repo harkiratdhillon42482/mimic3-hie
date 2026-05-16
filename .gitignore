@@ -1,0 +1,34 @@
+﻿# YottaDB data files — never commit
+*.dat
+*.gld
+*.mjl
+*.mjl_*
+
+# Data directory — contains patient data
+data/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+
+# Environment and credentials
+.env
+test_pg.py
+
+# Docker data volumes
+data/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Stray dockerfiles
+*.dockerfile
+Untitled-1.dockerfile
