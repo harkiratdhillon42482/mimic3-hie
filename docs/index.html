@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liver Transplant Prediction — Results Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --navy:  #1B3A6B;
+    --teal:  #0D7377;
+    --green: #1D9E75;
+    --purple:#534AB7;
+    --red:   #E24B4A;
+    --blue:  #378ADD;
+    --pink:  #D4537E;
+    --gray:  #888780;
+    --amber: #BA7517;
+    --bg:    #F8F9FB;
+    --card:  #FFFFFF;
+    --text:  #1A1A2E;
+    --muted: #64748B;
+    --border:#E2E8F0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--navy);
+    color: white;
+    padding: 2.5rem 2rem 2rem;
+    border-bottom: 4px solid var(--teal);
+  }
+  header h1 {
+    font-size: 1.7rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+  }
+  header p {
+    font-size: 0.95rem;
+    opacity: 0.75;
+  }
+  .header-meta {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  .meta-chip {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 999px;
+    padding: 0.3rem 0.85rem;
+    font-size: 0.8rem;
+    color: white;
+  }
+
+  /* ── Layout ── */
+  main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  section { margin-bottom: 2.5rem; }
+  section h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--teal);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .card-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+  }
+
+  /* ── Metric grid ── */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 2rem;
+  }
+  .metric-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1rem;
+    text-align: center;
+    border-top: 3px solid var(--teal);
+  }
+  .metric-card .label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.4rem;
+  }
+  .metric-card .value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .metric-card .sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  /* ── Chart grids ── */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 900px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .legend-swatch {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* ── Option C badges ── */
+  .option-c-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .criterion-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .criterion-card .crit-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .criterion-card .crit-val {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--teal);
+  }
+  .criterion-card .crit-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.25rem;
+    line-height: 1.3;
+  }
+
+  /* ── Result table ── */
+  .result-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  .result-table th {
+    background: var(--navy);
+    color: white;
+    padding: 0.65rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .result-table td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .result-table tr:nth-child(even) td { background: var(--bg); }
+  .result-table tr.best td { background: #EEF9F4; font-weight: 600; }
+  .result-table tr.ref td { color: var(--muted); font-style: italic; }
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .badge-best { background: #D1FAE5; color: #065F46; }
+  .badge-ref  { background: #F1F5F9; color: var(--muted); }
+
+  /* ── Architecture comparison ── */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .arch-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .arch-card h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .arch-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+  }
+  .arch-row:last-child { border-bottom: none; }
+  .arch-label { color: var(--muted); }
+  .arch-value { font-weight: 600; color: var(--text); }
+  .arch-winner { color: var(--green); font-weight: 700; }
+
+  /* ── Patient cases ── */
+  .cases-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .case-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem;
+    border-left: 4px solid var(--navy);
+  }
+  .case-card.died   { border-left-color: var(--red); }
+  .case-card.decomp { border-left-color: var(--amber); }
+  .case-card.rising { border-left-color: var(--blue); }
+  .case-card.stable { border-left-color: var(--green); }
+  .case-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.6rem;
+  }
+  .case-id { font-size: 0.78rem; color: var(--muted); }
+  .case-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+  }
+  .label-pos { background: #FEE2E2; color: #991B1B; }
+  .label-neg { background: #D1FAE5; color: #065F46; }
+  .case-title { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
+  .meld-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 0.4rem 0;
+    font-size: 0.78rem;
+  }
+  .meld-pill {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+    font-weight: 600;
+  }
+  .meld-arrow { color: var(--muted); font-size: 0.9rem; }
+  .meld-up   { color: var(--red); }
+  .meld-down { color: var(--green); }
+  .case-note { font-size: 0.75rem; color: var(--muted); margin-top: 0.4rem; }
+
+  /* ── Footer ── */
+  footer {
+    background: var(--navy);
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.8rem;
+    margin-top: 3rem;
+  }
+  footer strong { color: white; }
+
+  canvas { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>MUMPS-Native Clinical AI — Liver Transplant Candidate Identification</h1>
+  <p>Prospective prediction of next-admission liver deterioration using dual-architecture validation (YottaDB MUMPS + PostgreSQL)</p>
+  <div class="header-meta">
+    <span class="meta-chip">MIMIC-III · 3,382 patients · 5,505 admissions</span>
+    <span class="meta-chip">Prospective · Patient-level split · No leakage</span>
+    <span class="meta-chip">5 models compared</span>
+    <span class="meta-chip">Harkirat Dhillon MD, MS · Northwell Health · 2026</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- KEY METRICS -->
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="label">Best AUC (XGBoost)</div>
+      <div class="value">0.853</div>
+      <div class="sub">95% CI [0.818 – 0.884]</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Liver Patients</div>
+      <div class="value">3,382</div>
+      <div class="sub">5,505 admissions · MIMIC-III</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">MUMPS Speedup</div>
+      <div class="value">3.4×</div>
+      <div class="sub">23.5s vs 79s feature extraction</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Prediction Pairs</div>
+      <div class="value">2,123</div>
+      <div class="sub">prospective · 22.3% positive</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">AUC at MELD 30-40</div>
+      <div class="value">0.901</div>
+      <div class="sub">highest where it matters most</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Option C Positive</div>
+      <div class="value">43.8%</div>
+      <div class="sub">1,480 transplant-level patients</div>
+    </div>
+  </div>
+
+  <!-- MODEL COMPARISON TABLE -->
+  <section>
+    <h2><span class="dot" style="background:var(--teal)"></span>Model Performance Comparison</h2>
+    <div class="card">
+      <table class="result-table">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>AUC-ROC</th>
+            <th>95% CI</th>
+            <th>Accuracy</th>
+            <th>Precision</th>
+            <th>Recall</th>
+            <th>F1</th>
+            <th>Train Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="best">
+            <td>XGBoost <span class="badge badge-best">★ best</span></td>
+            <td>0.8526</td><td>[0.818, 0.884]</td>
+            <td>81.7%</td><td>59.7%</td><td>57.7%</td><td>58.7%</td><td>0.8s</td>
+          </tr>
+          <tr>
+            <td>LightGBM</td>
+            <td>0.8469</td><td>[0.812, 0.880]</td>
+            <td>81.5%</td><td>60.2%</td><td>53.7%</td><td>56.7%</td><td>0.3s</td>
+          </tr>
+          <tr>
+            <td>Gradient Boosting</td>
+            <td>0.8288</td><td>[0.792, 0.863]</td>
+            <td>81.9%</td><td>62.0%</td><td>50.3%</td><td>55.6%</td><td>3.1s</td>
+          </tr>
+          <tr>
+            <td>Random Forest</td>
+            <td>0.8213</td><td>[0.780, 0.860]</td>
+            <td>80.2%</td><td>56.8%</td><td>50.3%</td><td>53.4%</td><td>0.7s</td>
+          </tr>
+          <tr>
+            <td>Logistic Regression</td>
+            <td>0.7623</td><td>[0.721, 0.801]</td>
+            <td>71.7%</td><td>42.0%</td><td>66.4%</td><td>51.4%</td><td>&lt;0.1s</td>
+          </tr>
+          <tr class="ref">
+            <td>Ghandian et al. (2022) <span class="badge badge-ref">reference</span></td>
+            <td>0.871</td><td>[0.859, 0.882]</td>
+            <td>—</td><td>—</td><td>—</td><td>—</td><td>retrospective</td>
+          </tr>
+          <tr class="ref">
+            <td>Published MIMIC benchmarks <span class="badge badge-ref">reference</span></td>
+            <td>0.75–0.82</td><td>—</td>
+            <td>—</td><td>—</td><td>—</td><td>—</td><td>various</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CHARTS ROW 1 -->
+  <section>
+    <h2><span class="dot" style="background:var(--purple)"></span>Model AUC &amp; Classification Metrics</h2>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">AUC-ROC — all models vs benchmarks</div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--green)"></span>our models</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--gray)"></span>published benchmarks</span>
+        </div>
+        <div style="position:relative;height:260px;">
+          <canvas id="aucChart" role="img" aria-label="Bar chart of AUC scores. XGBoost 0.853 is best. Ghandian 0.871 shown as reference.">XGBoost 0.8526, LightGBM 0.8469, Gradient Boosting 0.8288, Random Forest 0.8213, Logistic Regression 0.7623, Ghandian 2022 0.871, MIMIC benchmarks 0.78.</canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Precision · Recall · F1 by model</div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--blue)"></span>precision</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--green)"></span>recall</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--pink)"></span>F1</span>
+        </div>
+        <div style="position:relative;height:260px;">
+          <canvas id="prfChart" role="img" aria-label="Grouped bar chart of precision recall F1 for 5 models.">XGBoost precision 0.597 recall 0.577 F1 0.587.</canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHARTS ROW 2 -->
+  <section>
+    <h2><span class="dot" style="background:var(--red)"></span>MELD Severity Analysis</h2>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">AUC by MELD band — model performance vs clinical severity</div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch" style="background:#639922"></span>AUC (left axis)</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--red);"></span>in-hospital mortality (right axis)</span>
+        </div>
+        <div style="position:relative;height:260px;">
+          <canvas id="meldChart" role="img" aria-label="Combined bar and line chart. MELD 30-40 has AUC 0.901 and 45% mortality.">MELD 0-9 AUC 0.824 mortality 2%, MELD 10-19 AUC 0.847 mortality 5.1%, MELD 20-29 AUC 0.866 mortality 12.6%, MELD 30-40 AUC 0.901 mortality 45.3%.</canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Mortality cascade — complications in MELD ≥30 deaths</div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--red)"></span>% of MELD≥30 in-hospital deaths</span>
+        </div>
+        <div style="position:relative;height:260px;">
+          <canvas id="mortChart" role="img" aria-label="Horizontal bar chart of complications in MELD 30+ deaths. Acute kidney failure 50.7%, severe sepsis 49.3%.">Acute kidney failure 50.7%, severe sepsis 49.3%, hepatic encephalopathy 32.1%, hepatorenal syndrome 28.8%, portal hypertension 27.7%, thrombocytopenia 22%, heart failure 20%, bleeding varices 10.4%.</canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURE IMPORTANCE -->
+  <section>
+    <h2><span class="dot" style="background:var(--purple)"></span>Feature Importance</h2>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Top 10 features — XGBoost importance scores</div>
+        <div style="position:relative;height:300px;">
+          <canvas id="featChart" role="img" aria-label="Horizontal bar chart. meld_consecutive_increases is top feature at 0.077.">Top features: meld_consecutive_increases 0.077, current_inr_max 0.044, had_icu_stay 0.028, current_bilirubin_mean 0.026, meld_std 0.023.</canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Feature importance cross-validation — XGBoost vs Random Forest</div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--purple)"></span>XGBoost</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--blue)"></span>Random Forest</span>
+        </div>
+        <div style="position:relative;height:300px;">
+          <canvas id="feat2Chart" role="img" aria-label="Grouped horizontal bar chart comparing XGBoost and Random Forest feature importance for top 8 features.">XGBoost and Random Forest agree on meld_consecutive_increases, current_inr, and bilirubin as top features.</canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE COMPARISON -->
+  <section>
+    <h2><span class="dot" style="background:var(--teal)"></span>Architecture Comparison — MUMPS ^PHD vs PostgreSQL</h2>
+    <div class="arch-grid">
+      <div class="arch-card">
+        <h3><span style="width:12px;height:12px;border-radius:50%;background:var(--green);display:inline-block;"></span>MUMPS YottaDB Path</h3>
+        <div class="arch-row"><span class="arch-label">Feature extraction</span><span class="arch-value arch-winner">23.5 seconds ✓</span></div>
+        <div class="arch-row"><span class="arch-label">Patients extracted</span><span class="arch-value">3,350</span></div>
+        <div class="arch-row"><span class="arch-label">Admissions captured</span><span class="arch-value">4,615</span></div>
+        <div class="arch-row"><span class="arch-label">XGBoost AUC (prospective)</span><span class="arch-value">0.8196</span></div>
+        <div class="arch-row"><span class="arch-label">Option C positive rate</span><span class="arch-value">43.4%</span></div>
+        <div class="arch-row"><span class="arch-label">Deployment advantage</span><span class="arch-value arch-winner">Zero-latency HL7 triggers</span></div>
+        <div class="arch-row"><span class="arch-label">Point lookup speed</span><span class="arch-value arch-winner">~2ms per patient</span></div>
+      </div>
+      <div class="arch-card">
+        <h3><span style="width:12px;height:12px;border-radius:50%;background:var(--purple);display:inline-block;"></span>PostgreSQL Path</h3>
+        <div class="arch-row"><span class="arch-label">Feature extraction</span><span class="arch-value">79 seconds</span></div>
+        <div class="arch-row"><span class="arch-label">Patients extracted</span><span class="arch-value arch-winner">3,382 ✓</span></div>
+        <div class="arch-row"><span class="arch-label">Admissions captured</span><span class="arch-value arch-winner">5,505 ✓</span></div>
+        <div class="arch-row"><span class="arch-label">XGBoost AUC (prospective)</span><span class="arch-value arch-winner">0.8526 ✓</span></div>
+        <div class="arch-row"><span class="arch-label">Option C positive rate</span><span class="arch-value">43.8%</span></div>
+        <div class="arch-row"><span class="arch-label">Deployment advantage</span><span class="arch-value">SQL-familiar ecosystem</span></div>
+        <div class="arch-row"><span class="arch-label">Cohort aggregation</span><span class="arch-value arch-winner">Faster with SQL joins ✓</span></div>
+      </div>
+    </div>
+    <div style="margin-top:16px;" class="card">
+      <div class="card-title">feature extraction time comparison</div>
+      <div style="position:relative;height:180px;">
+        <canvas id="archChart" role="img" aria-label="Bar chart. MUMPS extracts features in 23.5 seconds vs 79 seconds for Postgres. 3.4x speedup.">MUMPS 23.5s vs Postgres 79s feature extraction. MUMPS is 3.4x faster. AUC: MUMPS 0.820 vs Postgres 0.853 — statistically equivalent (overlapping 95% CIs).</canvas>
+      </div>
+      <p style="font-size:0.8rem;color:var(--muted);margin-top:0.75rem;text-align:center;">
+        AUC difference (0.033) is not statistically significant — 95% confidence intervals overlap.<br>
+        MUMPS admission gap (16%) reflects ETL completeness, not architectural limitation.
+      </p>
+    </div>
+  </section>
+
+  <!-- OPTION C LABEL -->
+  <section>
+    <h2><span class="dot" style="background:var(--amber)"></span>Option C Composite Label — Clinical Criteria</h2>
+    <div class="option-c-grid">
+      <div class="criterion-card">
+        <div class="crit-num">1</div>
+        <div class="crit-val">716</div>
+        <div class="crit-label">Peak MELD-Na ≥ 25</div>
+      </div>
+      <div class="criterion-card">
+        <div class="crit-num">2</div>
+        <div class="crit-val">483</div>
+        <div class="crit-label">MELD delta ≥ 5 pts between admissions</div>
+      </div>
+      <div class="criterion-card">
+        <div class="crit-num">3</div>
+        <div class="crit-val">320</div>
+        <div class="crit-label">Hepatorenal syndrome (ICD-9: 5724)</div>
+      </div>
+      <div class="criterion-card">
+        <div class="crit-num">4</div>
+        <div class="crit-val">589</div>
+        <div class="crit-label">Hepatic encephalopathy (ICD-9: 5722)</div>
+      </div>
+      <div class="criterion-card">
+        <div class="crit-num">5</div>
+        <div class="crit-val">304</div>
+        <div class="crit-label">Bleeding esophageal varices (ICD-9: 45620)</div>
+      </div>
+      <div class="criterion-card">
+        <div class="crit-num">6</div>
+        <div class="crit-val">~200</div>
+        <div class="crit-label">Died in hospital + peak MELD ≥ 15</div>
+      </div>
+    </div>
+    <p style="font-size:0.8rem;color:var(--muted);margin-top:0.75rem;text-align:center;">
+      Label = 1 (positive) if ANY criterion is met. 1,480 patients positive (43.8%). Criteria may overlap.
+    </p>
+  </section>
+
+  <!-- REAL PATIENT CASES -->
+  <section>
+    <h2><span class="dot" style="background:var(--blue)"></span>Internal Validation — Real Patient Trajectories</h2>
+    <div class="cases-grid">
+      <div class="case-card died">
+        <div class="case-header">
+          <span class="case-id">Patient 124 · Age 75 · Male</span>
+          <span class="case-label label-pos">POSITIVE</span>
+        </div>
+        <div class="case-title">MELD Rising → Died</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem;">Diagnosis: Chronic Hepatitis C</div>
+        <div class="meld-row">
+          <span class="meld-pill">MELD 8.2</span>
+          <span class="meld-arrow">→</span>
+          <span class="meld-pill">N/A</span>
+          <span class="meld-arrow">→</span>
+          <span class="meld-pill">N/A</span>
+          <span class="meld-arrow">→</span>
+          <span class="meld-pill meld-up">17.5 💀</span>
+        </div>
+        <div class="case-note">Creatinine quietly tripled across 5 years (1.2→2.8). Albumin added at last admission. MELD jumped +9.3 then died. Model should flag at admission 3 from creatinine trend.</div>
+      </div>
+      <div class="case-card decomp">
+        <div class="case-header">
+          <span class="case-id">Patient 2369 · Age 71 · Male</span>
+          <span class="case-label label-pos">POSITIVE</span>
+        </div>
+        <div class="case-title">MELD Rising → Decompensated (survived)</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem;">Diagnoses: Cirrhosis, Liver Cancer (HCC)</div>
+        <div class="meld-row">
+          <span class="meld-pill">MELD 10.0</span>
+          <span class="meld-arrow">→</span>
+          <span class="meld-pill meld-up">22.0 ↑+12</span>
+          <span class="meld-arrow">→</span>
+          <span class="meld-pill meld-up">25.0 ↑+3</span>
+        </div>
+        <div class="case-note">12-point MELD jump between admissions 1 and 2. Model correctly flagged at admission 1 (AUC 0.857 for first-admission prediction). Bilirubin tripled, creatinine doubled, sodium dropped to 131.</div>
+      </div>
+      <div class="case-card rising">
+        <div class="case-header">
+          <span class="case-id">Patient 357 · Age 64 · Male</span>
+          <span class="case-label label-pos">POSITIVE</span>
+        </div>
+        <div class="case-title">Stable MELD — but on maximum therapy</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem;">Diagnoses: Varices, Encephalopathy, HCC, Cirrhosis</div>
+        <div class="meld-row">
+          <span class="meld-pill">8.5</span>
+          <span class="meld-arrow">→</span>
+          <span class="meld-pill">8.5</span>
+          <span class="meld-arrow">→</span>
+          <span class="meld-pill">10.6</span>
+          <span class="meld-arrow">→</span>
+          <span class="meld-pill">10.2</span>
+        </div>
+        <div class="case-note">MELD 8–10 throughout but on Lactulose + Rifaximin + Lasix from admission 1. Option C positive via varices + encephalopathy. Proves MELD alone insufficient — treatment context matters.</div>
+      </div>
+      <div class="case-card stable">
+        <div class="case-header">
+          <span class="case-id">Patient 5662 · Age 80 · Female</span>
+          <span class="case-label label-neg">NEGATIVE</span>
+        </div>
+        <div class="case-title">MELD Rising → Stayed compensated</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem;">Diagnosis: Chronic liver disease sequelae</div>
+        <div class="meld-row">
+          <span class="meld-pill">11.6</span>
+          <span class="meld-arrow">→</span>
+          <span class="meld-pill meld-down">11.0</span>
+          <span class="meld-arrow">→</span>
+          <span class="meld-pill">13.5</span>
+          <span class="meld-arrow">→</span>
+          <span class="meld-pill">18.1</span>
+        </div>
+        <div class="case-note">MELD rising but never crossed ≥5-point threshold between consecutive admissions. No decompensation markers. Model correctly did NOT flag any transition. Validates 5-point threshold calibration.</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>MUMPS-Native Clinical AI for Liver Transplant Candidate Identification</strong><br>
+  Harkirat Dhillon MD, MS — Northwell Health — 2026 · MIMIC-III · YottaDB + PostgreSQL · XGBoost AUC 0.853
+</footer>
+
+<script>
+const textColor = '#64748B';
+const gridColor = 'rgba(0,0,0,0.06)';
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+Chart.defaults.font.size = 12;
+
+const base = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { ticks: { color: textColor }, grid: { color: gridColor } },
+    y: { ticks: { color: textColor }, grid: { color: gridColor } }
+  }
+};
+
+new Chart(document.getElementById('aucChart'), {
+  type: 'bar',
+  data: {
+    labels: ['XGBoost','LightGBM','Grad.\nBoost','Rand.\nForest','Log.\nReg.','Ghandian\n2022','MIMIC\nbench.'],
+    datasets: [{
+      data: [0.8526,0.8469,0.8288,0.8213,0.7623,0.871,0.78],
+      backgroundColor: ['#1D9E75','#1D9E75','#1D9E75','#1D9E75','#1D9E75','#888780','#888780'],
+      borderRadius: 5, borderWidth: 0
+    }]
+  },
+  options: {
+    ...base,
+    scales: {
+      x: { ticks: { color: textColor, maxRotation: 0 }, grid: { color: gridColor } },
+      y: { min: 0.6, max: 0.95, ticks: { color: textColor, callback: v => v.toFixed(2) }, grid: { color: gridColor } }
+    },
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => 'AUC: ' + ctx.raw.toFixed(4) } } }
+  }
+});
+
+new Chart(document.getElementById('prfChart'), {
+  type: 'bar',
+  data: {
+    labels: ['XGBoost','LightGBM','Grad. Boost','Rand. Forest','Log. Reg.'],
+    datasets: [
+      { data: [0.597,0.602,0.620,0.568,0.420], backgroundColor: '#378ADD', borderRadius: 3, borderWidth: 0 },
+      { data: [0.577,0.537,0.503,0.503,0.664], backgroundColor: '#1D9E75', borderRadius: 3, borderWidth: 0 },
+      { data: [0.587,0.567,0.556,0.534,0.514], backgroundColor: '#D4537E', borderRadius: 3, borderWidth: 0 },
+    ]
+  },
+  options: {
+    ...base,
+    scales: {
+      x: { ticks: { color: textColor, maxRotation: 20 }, grid: { color: gridColor } },
+      y: { min: 0, max: 0.8, ticks: { color: textColor, callback: v => v.toFixed(1) }, grid: { color: gridColor } }
+    }
+  }
+});
+
+new Chart(document.getElementById('meldChart'), {
+  type: 'bar',
+  data: {
+    labels: ['MELD 0-9\n(Watch)','MELD 10-19\n(Monitor)','MELD 20-29\n(Evaluate)','MELD 30-40\n(Urgent)'],
+    datasets: [
+      { data: [0.824,0.847,0.866,0.901], backgroundColor: '#639922', borderRadius: 4, borderWidth: 0, yAxisID: 'y' },
+      { data: [0.020,0.051,0.126,0.453], type: 'line', borderColor: '#E24B4A', backgroundColor: 'transparent', borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: '#E24B4A', yAxisID: 'y2' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: textColor, maxRotation: 0 }, grid: { color: gridColor } },
+      y:  { min: 0.7, max: 0.95, ticks: { color: textColor, callback: v => v.toFixed(2) }, grid: { color: gridColor }, title: { display: true, text: 'AUC', color: textColor } },
+      y2: { position: 'right', min: 0, max: 0.7, ticks: { color: '#E24B4A', callback: v => (v*100).toFixed(0)+'%' }, grid: { display: false }, title: { display: true, text: 'mortality', color: '#E24B4A' } }
+    }
+  }
+});
+
+new Chart(document.getElementById('mortChart'), {
+  type: 'bar',
+  data: {
+    labels: ['acute kidney failure','severe sepsis','hepatic encephalopathy','hepatorenal syndrome','portal hypertension','thrombocytopenia','heart failure','bleeding varices'],
+    datasets: [{ data: [50.7,49.3,32.1,28.8,27.7,22.0,20.0,10.4], backgroundColor: '#E24B4A', borderRadius: 3, borderWidth: 0 }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { max: 60, ticks: { color: textColor, callback: v => v+'%' }, grid: { color: gridColor } },
+      y: { ticks: { color: textColor, font: { size: 11 } }, grid: { display: false } }
+    }
+  }
+});
+
+new Chart(document.getElementById('featChart'), {
+  type: 'bar',
+  data: {
+    labels: ['meld_consec_increases','current_inr_max','had_icu_stay','current_bili_mean','current_bili_max','meld_std','prior_ferritin_count','n_admissions','current_creat_max','current_inr_mean'],
+    datasets: [{ data: [0.0770,0.0435,0.0281,0.0261,0.0260,0.0229,0.0201,0.0194,0.0192,0.0191], backgroundColor: '#534AB7', borderRadius: 3, borderWidth: 0 }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: textColor, callback: v => v.toFixed(3) }, grid: { color: gridColor } },
+      y: { ticks: { color: textColor, font: { size: 11 } }, grid: { display: false } }
+    }
+  }
+});
+
+new Chart(document.getElementById('feat2Chart'), {
+  type: 'bar',
+  data: {
+    labels: ['meld_consec_incr','current_inr_max','had_icu_stay','current_bili_mean','current_bili_max','meld_std','n_admissions','current_creat_max'],
+    datasets: [
+      { label: 'XGBoost', data: [0.0770,0.0435,0.0281,0.0261,0.0260,0.0229,0.0194,0.0192], backgroundColor: '#534AB7', borderRadius: 3, borderWidth: 0 },
+      { label: 'Random Forest', data: [0.0541,0.0530,0.0033,0.0673,0.0502,0.0202,0.0131,0.0325], backgroundColor: '#378ADD', borderRadius: 3, borderWidth: 0 }
+    ]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: textColor, callback: v => v.toFixed(3) }, grid: { color: gridColor } },
+      y: { ticks: { color: textColor, font: { size: 11 } }, grid: { display: false } }
+    }
+  }
+});
+
+new Chart(document.getElementById('archChart'), {
+  type: 'bar',
+  data: {
+    labels: ['feature extraction time (seconds)', 'AUC × 10 (scaled)', 'admissions ÷ 100'],
+    datasets: [
+      { label: 'Postgres', data: [79, 8.526, 55.05], backgroundColor: '#534AB7', borderRadius: 4, borderWidth: 0 },
+      { label: 'MUMPS',    data: [23.5, 8.196, 46.15], backgroundColor: '#1D9E75', borderRadius: 4, borderWidth: 0 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false },
+      tooltip: { callbacks: { label: ctx => {
+        const real = [['79s','23.5s'],['0.8526','0.8196'],['5,505','4,615']];
+        return ctx.dataset.label + ': ' + real[ctx.dataIndex][ctx.datasetIndex];
+      }}}
+    },
+    scales: {
+      x: { ticks: { color: textColor }, grid: { color: gridColor } },
+      y: { ticks: { color: textColor }, grid: { color: gridColor } }
+    }
+  }
+});
+</script>
+</body>
+</html>
