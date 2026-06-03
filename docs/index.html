@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Liver Transplant Prediction - Results Dashboard</title>
+<title>Liver Transplant Prediction — Results Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
   :root {
@@ -30,7 +30,7 @@
     min-height: 100vh;
   }
 
-  /* ?? Header ?? */
+  /* ── Header ── */
   header {
     background: var(--navy);
     color: white;
@@ -62,7 +62,7 @@
     color: white;
   }
 
-  /* ?? Layout ?? */
+  /* ── Layout ── */
   main {
     max-width: 1280px;
     margin: 0 auto;
@@ -89,7 +89,7 @@
     flex-shrink: 0;
   }
 
-  /* ?? Cards ?? */
+  /* ── Cards ── */
   .card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -105,7 +105,7 @@
     margin-bottom: 1rem;
   }
 
-  /* ?? Metric grid ?? */
+  /* ── Metric grid ── */
   .metrics {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -140,7 +140,7 @@
     margin-top: 0.3rem;
   }
 
-  /* ?? Chart grids ?? */
+  /* ── Chart grids ── */
   .grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -155,7 +155,7 @@
     .grid-2, .grid-3 { grid-template-columns: 1fr; }
   }
 
-  /* ?? Legend ?? */
+  /* ── Legend ── */
   .legend {
     display: flex;
     flex-wrap: wrap;
@@ -175,7 +175,7 @@
     flex-shrink: 0;
   }
 
-  /* ?? Option C badges ?? */
+  /* ── Option C badges ── */
   .option-c-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -212,7 +212,7 @@
     line-height: 1.3;
   }
 
-  /* ?? Result table ?? */
+  /* ── Result table ── */
   .result-table {
     width: 100%;
     border-collapse: collapse;
@@ -246,7 +246,7 @@
   .badge-best { background: #D1FAE5; color: #065F46; }
   .badge-ref  { background: #F1F5F9; color: var(--muted); }
 
-  /* ?? Architecture comparison ?? */
+  /* ── Architecture comparison ── */
   .arch-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -279,7 +279,7 @@
   .arch-value { font-weight: 600; color: var(--text); }
   .arch-winner { color: var(--green); font-weight: 700; }
 
-  /* ?? Patient cases ?? */
+  /* ── Patient cases ── */
   .cases-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -332,7 +332,7 @@
   .meld-down { color: var(--green); }
   .case-note { font-size: 0.75rem; color: var(--muted); margin-top: 0.4rem; }
 
-  /* ?? Footer ?? */
+  /* ── Footer ── */
   footer {
     background: var(--navy);
     color: rgba(255,255,255,0.6);
@@ -349,13 +349,13 @@
 <body>
 
 <header>
-  <h1>MUMPS-Native Clinical AI - Liver Transplant Candidate Identification</h1>
+  <h1>MUMPS-Native Clinical AI — Liver Transplant Candidate Identification</h1>
   <p>Prospective prediction of next-admission liver deterioration using dual-architecture validation (YottaDB MUMPS + PostgreSQL)</p>
   <div class="header-meta">
-    <span class="meta-chip">MIMIC-III . 3,382 patients . 5,505 admissions</span>
-    <span class="meta-chip">Prospective . Patient-level split . No leakage</span>
+    <span class="meta-chip">MIMIC-III · 3,382 patients · 5,505 admissions</span>
+    <span class="meta-chip">Prospective · Patient-level split · No leakage</span>
     <span class="meta-chip">5 models compared</span>
-    <span class="meta-chip">MIMIC-III . YottaDB + PostgreSQL . XGBoost AUC 0.853</span>
+    <span class="meta-chip">Harkirat Dhillon MD, MS · Northwell Health · 2026</span>
   </div>
 </header>
 
@@ -366,22 +366,22 @@
     <div class="metric-card">
       <div class="label">Best AUC (XGBoost)</div>
       <div class="value">0.853</div>
-      <div class="sub">95% CI [0.818 ? 0.884]</div>
+      <div class="sub">95% CI [0.818 – 0.884]</div>
     </div>
     <div class="metric-card">
       <div class="label">Liver Patients</div>
       <div class="value">3,382</div>
-      <div class="sub">5,505 admissions . MIMIC-III</div>
+      <div class="sub">5,505 admissions · MIMIC-III</div>
     </div>
     <div class="metric-card">
       <div class="label">MUMPS Speedup</div>
-      <div class="value">3.4?</div>
+      <div class="value">3.4×</div>
       <div class="sub">23.5s vs 79s feature extraction</div>
     </div>
     <div class="metric-card">
       <div class="label">Prediction Pairs</div>
       <div class="value">2,123</div>
-      <div class="sub">prospective . 22.3% positive</div>
+      <div class="sub">prospective · 22.3% positive</div>
     </div>
     <div class="metric-card">
       <div class="label">AUC at MELD 30-40</div>
@@ -414,7 +414,7 @@
         </thead>
         <tbody>
           <tr class="best">
-            <td>XGBoost <span class="badge badge-best">? best</span></td>
+            <td>XGBoost <span class="badge badge-best">★ best</span></td>
             <td>0.8526</td><td>[0.818, 0.884]</td>
             <td>81.7%</td><td>59.7%</td><td>57.7%</td><td>58.7%</td><td>0.8s</td>
           </tr>
@@ -441,12 +441,12 @@
           <tr class="ref">
             <td>Ghandian et al. (2022) <span class="badge badge-ref">reference</span></td>
             <td>0.871</td><td>[0.859, 0.882]</td>
-            <td>-</td><td>-</td><td>-</td><td>-</td><td>retrospective</td>
+            <td>—</td><td>—</td><td>—</td><td>—</td><td>retrospective</td>
           </tr>
           <tr class="ref">
             <td>Published MIMIC benchmarks <span class="badge badge-ref">reference</span></td>
-            <td>0.75?0.82</td><td>-</td>
-            <td>-</td><td>-</td><td>-</td><td>-</td><td>various</td>
+            <td>0.75–0.82</td><td>—</td>
+            <td>—</td><td>—</td><td>—</td><td>—</td><td>various</td>
           </tr>
         </tbody>
       </table>
@@ -458,7 +458,7 @@
     <h2><span class="dot" style="background:var(--purple)"></span>Model AUC &amp; Classification Metrics</h2>
     <div class="grid-2">
       <div class="card">
-        <div class="card-title">AUC-ROC - all models vs benchmarks</div>
+        <div class="card-title">AUC-ROC — all models vs benchmarks</div>
         <div class="legend">
           <span class="legend-item"><span class="legend-swatch" style="background:var(--green)"></span>our models</span>
           <span class="legend-item"><span class="legend-swatch" style="background:var(--gray)"></span>published benchmarks</span>
@@ -468,7 +468,7 @@
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Precision . Recall . F1 by model</div>
+        <div class="card-title">Precision · Recall · F1 by model</div>
         <div class="legend">
           <span class="legend-item"><span class="legend-swatch" style="background:var(--blue)"></span>precision</span>
           <span class="legend-item"><span class="legend-swatch" style="background:var(--green)"></span>recall</span>
@@ -486,7 +486,7 @@
     <h2><span class="dot" style="background:var(--red)"></span>MELD Severity Analysis</h2>
     <div class="grid-2">
       <div class="card">
-        <div class="card-title">AUC by MELD band - model performance vs clinical severity</div>
+        <div class="card-title">AUC by MELD band — model performance vs clinical severity</div>
         <div class="legend">
           <span class="legend-item"><span class="legend-swatch" style="background:#639922"></span>AUC (left axis)</span>
           <span class="legend-item"><span class="legend-swatch" style="background:var(--red);"></span>in-hospital mortality (right axis)</span>
@@ -496,9 +496,9 @@
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Mortality cascade - complications in MELD >=30 deaths</div>
+        <div class="card-title">Mortality cascade — complications in MELD ≥30 deaths</div>
         <div class="legend">
-          <span class="legend-item"><span class="legend-swatch" style="background:var(--red)"></span>% of MELD>=30 in-hospital deaths</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--red)"></span>% of MELD≥30 in-hospital deaths</span>
         </div>
         <div style="position:relative;height:260px;">
           <canvas id="mortChart" role="img" aria-label="Horizontal bar chart of complications in MELD 30+ deaths. Acute kidney failure 50.7%, severe sepsis 49.3%.">Acute kidney failure 50.7%, severe sepsis 49.3%, hepatic encephalopathy 32.1%, hepatorenal syndrome 28.8%, portal hypertension 27.7%, thrombocytopenia 22%, heart failure 20%, bleeding varices 10.4%.</canvas>
@@ -512,13 +512,13 @@
     <h2><span class="dot" style="background:var(--purple)"></span>Feature Importance</h2>
     <div class="grid-2">
       <div class="card">
-        <div class="card-title">Top 10 features - XGBoost importance scores</div>
+        <div class="card-title">Top 10 features — XGBoost importance scores</div>
         <div style="position:relative;height:300px;">
           <canvas id="featChart" role="img" aria-label="Horizontal bar chart. meld_consecutive_increases is top feature at 0.077.">Top features: meld_consecutive_increases 0.077, current_inr_max 0.044, had_icu_stay 0.028, current_bilirubin_mean 0.026, meld_std 0.023.</canvas>
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Feature importance cross-validation - XGBoost vs Random Forest</div>
+        <div class="card-title">Feature importance cross-validation — XGBoost vs Random Forest</div>
         <div class="legend">
           <span class="legend-item"><span class="legend-swatch" style="background:var(--purple)"></span>XGBoost</span>
           <span class="legend-item"><span class="legend-swatch" style="background:var(--blue)"></span>Random Forest</span>
@@ -532,11 +532,11 @@
 
   <!-- ARCHITECTURE COMPARISON -->
   <section>
-    <h2><span class="dot" style="background:var(--teal)"></span>Architecture Comparison - MUMPS ^PHD vs PostgreSQL</h2>
+    <h2><span class="dot" style="background:var(--teal)"></span>Architecture Comparison — MUMPS ^PHD vs PostgreSQL</h2>
     <div class="arch-grid">
       <div class="arch-card">
         <h3><span style="width:12px;height:12px;border-radius:50%;background:var(--green);display:inline-block;"></span>MUMPS YottaDB Path</h3>
-        <div class="arch-row"><span class="arch-label">Feature extraction</span><span class="arch-value arch-winner">23.5 seconds ?</span></div>
+        <div class="arch-row"><span class="arch-label">Feature extraction</span><span class="arch-value arch-winner">23.5 seconds ✓</span></div>
         <div class="arch-row"><span class="arch-label">Patients extracted</span><span class="arch-value">3,350</span></div>
         <div class="arch-row"><span class="arch-label">Admissions captured</span><span class="arch-value">4,615</span></div>
         <div class="arch-row"><span class="arch-label">XGBoost AUC (prospective)</span><span class="arch-value">0.8196</span></div>
@@ -547,21 +547,21 @@
       <div class="arch-card">
         <h3><span style="width:12px;height:12px;border-radius:50%;background:var(--purple);display:inline-block;"></span>PostgreSQL Path</h3>
         <div class="arch-row"><span class="arch-label">Feature extraction</span><span class="arch-value">79 seconds</span></div>
-        <div class="arch-row"><span class="arch-label">Patients extracted</span><span class="arch-value arch-winner">3,382 ?</span></div>
-        <div class="arch-row"><span class="arch-label">Admissions captured</span><span class="arch-value arch-winner">5,505 ?</span></div>
-        <div class="arch-row"><span class="arch-label">XGBoost AUC (prospective)</span><span class="arch-value arch-winner">0.8526 ?</span></div>
+        <div class="arch-row"><span class="arch-label">Patients extracted</span><span class="arch-value arch-winner">3,382 ✓</span></div>
+        <div class="arch-row"><span class="arch-label">Admissions captured</span><span class="arch-value arch-winner">5,505 ✓</span></div>
+        <div class="arch-row"><span class="arch-label">XGBoost AUC (prospective)</span><span class="arch-value arch-winner">0.8526 ✓</span></div>
         <div class="arch-row"><span class="arch-label">Option C positive rate</span><span class="arch-value">43.8%</span></div>
         <div class="arch-row"><span class="arch-label">Deployment advantage</span><span class="arch-value">SQL-familiar ecosystem</span></div>
-        <div class="arch-row"><span class="arch-label">Cohort aggregation</span><span class="arch-value arch-winner">Faster with SQL joins ?</span></div>
+        <div class="arch-row"><span class="arch-label">Cohort aggregation</span><span class="arch-value arch-winner">Faster with SQL joins ✓</span></div>
       </div>
     </div>
     <div style="margin-top:16px;" class="card">
       <div class="card-title">feature extraction time comparison</div>
       <div style="position:relative;height:180px;">
-        <canvas id="archChart" role="img" aria-label="Bar chart. MUMPS extracts features in 23.5 seconds vs 79 seconds for Postgres. 3.4x speedup.">MUMPS 23.5s vs Postgres 79s feature extraction. MUMPS is 3.4x faster. AUC: MUMPS 0.820 vs Postgres 0.853 - statistically equivalent (overlapping 95% CIs).</canvas>
+        <canvas id="archChart" role="img" aria-label="Bar chart. MUMPS extracts features in 23.5 seconds vs 79 seconds for Postgres. 3.4x speedup.">MUMPS 23.5s vs Postgres 79s feature extraction. MUMPS is 3.4x faster. AUC: MUMPS 0.820 vs Postgres 0.853 — statistically equivalent (overlapping 95% CIs).</canvas>
       </div>
       <p style="font-size:0.8rem;color:var(--muted);margin-top:0.75rem;text-align:center;">
-        AUC difference (0.033) is not statistically significant - 95% confidence intervals overlap.<br>
+        AUC difference (0.033) is not statistically significant — 95% confidence intervals overlap.<br>
         MUMPS admission gap (16%) reflects ETL completeness, not architectural limitation.
       </p>
     </div>
@@ -569,17 +569,17 @@
 
   <!-- OPTION C LABEL -->
   <section>
-    <h2><span class="dot" style="background:var(--amber)"></span>Option C Composite Label - Clinical Criteria</h2>
+    <h2><span class="dot" style="background:var(--amber)"></span>Option C Composite Label — Clinical Criteria</h2>
     <div class="option-c-grid">
       <div class="criterion-card">
         <div class="crit-num">1</div>
         <div class="crit-val">716</div>
-        <div class="crit-label">Peak MELD-Na >= 25</div>
+        <div class="crit-label">Peak MELD-Na ≥ 25</div>
       </div>
       <div class="criterion-card">
         <div class="crit-num">2</div>
         <div class="crit-val">483</div>
-        <div class="crit-label">MELD delta >= 5 pts between admissions</div>
+        <div class="crit-label">MELD delta ≥ 5 pts between admissions</div>
       </div>
       <div class="criterion-card">
         <div class="crit-num">3</div>
@@ -599,7 +599,7 @@
       <div class="criterion-card">
         <div class="crit-num">6</div>
         <div class="crit-val">~200</div>
-        <div class="crit-label">Died in hospital + peak MELD >= 15</div>
+        <div class="crit-label">Died in hospital + peak MELD ≥ 15</div>
       </div>
     </div>
     <p style="font-size:0.8rem;color:var(--muted);margin-top:0.75rem;text-align:center;">
@@ -609,77 +609,77 @@
 
   <!-- REAL PATIENT CASES -->
   <section>
-    <h2><span class="dot" style="background:var(--blue)"></span>Internal Validation - Real Patient Trajectories</h2>
+    <h2><span class="dot" style="background:var(--blue)"></span>Internal Validation — Real Patient Trajectories</h2>
     <div class="cases-grid">
       <div class="case-card died">
         <div class="case-header">
-          <span class="case-id">Patient 124 . Age 75 . Male</span>
+          <span class="case-id">Patient 124 · Age 75 · Male</span>
           <span class="case-label label-pos">POSITIVE</span>
         </div>
-        <div class="case-title">MELD Rising -> Died</div>
+        <div class="case-title">MELD Rising → Died</div>
         <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem;">Diagnosis: Chronic Hepatitis C</div>
         <div class="meld-row">
           <span class="meld-pill">MELD 8.2</span>
-          <span class="meld-arrow">-></span>
+          <span class="meld-arrow">→</span>
           <span class="meld-pill">N/A</span>
-          <span class="meld-arrow">-></span>
+          <span class="meld-arrow">→</span>
           <span class="meld-pill">N/A</span>
-          <span class="meld-arrow">-></span>
-          <span class="meld-pill meld-up">17.5 ??</span>
+          <span class="meld-arrow">→</span>
+          <span class="meld-pill meld-up">17.5 💀</span>
         </div>
-        <div class="case-note">Creatinine quietly tripled across 5 years (1.2->2.8). Albumin added at last admission. MELD jumped +9.3 then died. Model should flag at admission 3 from creatinine trend.</div>
+        <div class="case-note">Creatinine quietly tripled across 5 years (1.2→2.8). Albumin added at last admission. MELD jumped +9.3 then died. Model should flag at admission 3 from creatinine trend.</div>
       </div>
       <div class="case-card decomp">
         <div class="case-header">
-          <span class="case-id">Patient 2369 . Age 71 . Male</span>
+          <span class="case-id">Patient 2369 · Age 71 · Male</span>
           <span class="case-label label-pos">POSITIVE</span>
         </div>
-        <div class="case-title">MELD Rising -> Decompensated (survived)</div>
+        <div class="case-title">MELD Rising → Decompensated (survived)</div>
         <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem;">Diagnoses: Cirrhosis, Liver Cancer (HCC)</div>
         <div class="meld-row">
           <span class="meld-pill">MELD 10.0</span>
-          <span class="meld-arrow">-></span>
-          <span class="meld-pill meld-up">22.0 ?+12</span>
-          <span class="meld-arrow">-></span>
-          <span class="meld-pill meld-up">25.0 ?+3</span>
+          <span class="meld-arrow">→</span>
+          <span class="meld-pill meld-up">22.0 ↑+12</span>
+          <span class="meld-arrow">→</span>
+          <span class="meld-pill meld-up">25.0 ↑+3</span>
         </div>
         <div class="case-note">12-point MELD jump between admissions 1 and 2. Model correctly flagged at admission 1 (AUC 0.857 for first-admission prediction). Bilirubin tripled, creatinine doubled, sodium dropped to 131.</div>
       </div>
       <div class="case-card rising">
         <div class="case-header">
-          <span class="case-id">Patient 357 . Age 64 . Male</span>
+          <span class="case-id">Patient 357 · Age 64 · Male</span>
           <span class="case-label label-pos">POSITIVE</span>
         </div>
-        <div class="case-title">Stable MELD - but on maximum therapy</div>
+        <div class="case-title">Stable MELD — but on maximum therapy</div>
         <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem;">Diagnoses: Varices, Encephalopathy, HCC, Cirrhosis</div>
         <div class="meld-row">
           <span class="meld-pill">8.5</span>
-          <span class="meld-arrow">-></span>
+          <span class="meld-arrow">→</span>
           <span class="meld-pill">8.5</span>
-          <span class="meld-arrow">-></span>
+          <span class="meld-arrow">→</span>
           <span class="meld-pill">10.6</span>
-          <span class="meld-arrow">-></span>
+          <span class="meld-arrow">→</span>
           <span class="meld-pill">10.2</span>
         </div>
-        <div class="case-note">MELD 8?10 throughout but on Lactulose + Rifaximin + Lasix from admission 1. Option C positive via varices + encephalopathy. Proves MELD alone insufficient - treatment context matters.</div>
+        <div class="case-note">MELD 8–10 throughout but on Lactulose + Rifaximin + Lasix from admission 1. Option C positive via varices + encephalopathy. Proves MELD alone insufficient — treatment context matters.</div>
       </div>
       <div class="case-card stable">
         <div class="case-header">
-          <span class="case-id">Patient 5662 . Age 80 . Female</span>
+          <span class="case-id">Patient 5662 · Age 80 · Female</span>
           <span class="case-label label-neg">NEGATIVE</span>
         </div>
-        <div class="case-title">MELD Rising -> Stayed compensated</div>
+        <div class="case-title">MELD Rising → Stayed compensated</div>
         <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem;">Diagnosis: Chronic liver disease sequelae</div>
         <div class="meld-row">
           <span class="meld-pill">11.6</span>
-          <span class="meld-arrow">-></span>
+          <span class="meld-arrow">→</span>
           <span class="meld-pill meld-down">11.0</span>
-          <span class="meld-arrow">-></span>
+          <span class="meld-arrow">→</span>
           <span class="meld-pill">13.5</span>
-          <span class="meld-arrow">-></span>
+          <span class="meld-arrow">→</span>
           <span class="meld-pill">18.1</span>
         </div>
-        <div class="case-note">MELD rising but never crossed >=5-point threshold between consecutive admissions. No decompensation markers. Model correctly did NOT flag any transition. Validates 5-point threshold calibration.</div>
+        <div class="case-note">MELD rising but never crossed ≥5-point threshold between consecutive admissions. No decompensation markers. Model correctly did NOT flag any transition. Validates 5-point threshold calibration.</div>
       </div>
     </div>
   </section>
@@ -688,7 +688,7 @@
 
 <footer>
   <strong>MUMPS-Native Clinical AI for Liver Transplant Candidate Identification</strong><br>
-  MIMIC-III . YottaDB + PostgreSQL . XGBoost AUC 0.853 . MIMIC-III . YottaDB + PostgreSQL . XGBoost AUC 0.853
+  Harkirat Dhillon MD, MS — Northwell Health — 2026 · MIMIC-III · YottaDB + PostgreSQL · XGBoost AUC 0.853
 </footer>
 
 <script>
@@ -820,7 +820,7 @@ new Chart(document.getElementById('feat2Chart'), {
 new Chart(document.getElementById('archChart'), {
   type: 'bar',
   data: {
-    labels: ['feature extraction time (seconds)', 'AUC ? 10 (scaled)', 'admissions ? 100'],
+    labels: ['feature extraction time (seconds)', 'AUC × 10 (scaled)', 'admissions ÷ 100'],
     datasets: [
       { label: 'Postgres', data: [79, 8.526, 55.05], backgroundColor: '#534AB7', borderRadius: 4, borderWidth: 0 },
       { label: 'MUMPS',    data: [23.5, 8.196, 46.15], backgroundColor: '#1D9E75', borderRadius: 4, borderWidth: 0 }
@@ -843,5 +843,3 @@ new Chart(document.getElementById('archChart'), {
 </script>
 </body>
 </html>
-
-
