@@ -1,4 +1,10 @@
-﻿# MUMPS-Native Clinical AI — Liver Transplant Candidate Identification
+﻿> [!WARNING]
+> **Proof of Concept — Not for Clinical Use**
+> This project is in active development and is intended solely for research and educational purposes.
+> It must not be used for clinical decision-making, patient care, diagnosis, or treatment.
+> MIMIC-III data is de-identified retrospective data and does not represent real-time clinical information.
+> Model outputs have not been validated for clinical deployment.
+# MUMPS-Native Clinical AI — Liver Transplant Candidate Identification
 
 A Health Information Exchange (HIE) built on YottaDB MUMPS as the canonical patient store and PostgreSQL as the analytics layer, with a prospective ML pipeline for liver transplant candidate identification using MIMIC-III.
 
@@ -83,4 +89,5 @@ python3 /project/ml/compare.py
 ## License
 
 MIT. MIMIC-III data subject to PhysioNet credentialing.
+
 
