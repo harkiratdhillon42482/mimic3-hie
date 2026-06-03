@@ -23,7 +23,7 @@ PG_CONFIG = {
     "port":     5432,
     "dbname":   "MIMICold",
     "user":     "postgres",
-    "password": "Panjwar4633",
+    "password": "YOUR_PASSWORD",
 }
 
 YDB_ENV = {
@@ -699,4 +699,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

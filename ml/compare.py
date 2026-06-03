@@ -1,5 +1,5 @@
-"""
-compare.py — Compare MUMPS vs Postgres ML results
+﻿"""
+compare.py â€” Compare MUMPS vs Postgres ML results
 Reads from hie.model_result and prints side-by-side comparison
 
 Run in pgAdmin or inside container:
@@ -14,7 +14,7 @@ PG_CONFIG = {
     "port":     5432,
     "dbname":   "MIMICold",
     "user":     "postgres",
-    "password": "Panjwar4633",
+    "password": "YOUR_PASSWORD",
 }
 
 def main():
@@ -43,21 +43,21 @@ def main():
     pg_row  = rows.get("POSTGRES")
     ydb_row = rows.get("MUMPS")
 
-    print("\n" + "═" * 65)
-    print("  30-Day Readmission — MUMPS vs Postgres Comparison")
-    print("═" * 65)
+    print("\n" + "â•" * 65)
+    print("  30-Day Readmission â€” MUMPS vs Postgres Comparison")
+    print("â•" * 65)
 
     # Header
     print(f"\n  {'Metric':<30} {'Postgres':>12} {'MUMPS':>12} {'Winner':>10}")
-    print("  " + "─" * 61)
+    print("  " + "â”€" * 61)
 
     def fmt(val, pct=False):
-        if val is None: return "—"
+        if val is None: return "â€”"
         if pct: return f"{float(val):.2%}"
         return f"{float(val):.4f}"
 
     def winner(pg_val, ydb_val, higher_is_better=True):
-        if pg_val is None or ydb_val is None: return "—"
+        if pg_val is None or ydb_val is None: return "â€”"
         pg_f  = float(pg_val)
         ydb_f = float(ydb_val)
         diff  = abs(pg_f - ydb_f)
@@ -68,7 +68,7 @@ def main():
             return "Postgres" if pg_f < ydb_f else "MUMPS"
 
     # Dataset stats
-    print(f"\n  {'── Dataset ──'}")
+    print(f"\n  {'â”€â”€ Dataset â”€â”€'}")
     if pg_row:
         print(f"  {'Total admissions':<30} {pg_row[4]:>12,}")
         print(f"  {'Train / Test':<30} {str(pg_row[5])+'/'+str(pg_row[6]):>12}")
@@ -76,7 +76,7 @@ def main():
         print(f"  {'Positive rate (readmit)':<30} {fmt(pg_row[8], pct=True):>12}")
 
     # Accuracy metrics
-    print(f"\n  {'── Accuracy (same model) ──'}")
+    print(f"\n  {'â”€â”€ Accuracy (same model) â”€â”€'}")
     metrics = [
         ("AUC-ROC",    9,  True),
         ("Accuracy",   10, True),
@@ -90,8 +90,8 @@ def main():
         w     = winner(pg_v, ydb_v, hib)
         print(f"  {label:<30} {fmt(pg_v):>12} {fmt(ydb_v):>12} {w:>10}")
 
-    # Speed metrics — THE KEY COMPARISON
-    print(f"\n  {'── Speed (feature extraction) ──'}")
+    # Speed metrics â€” THE KEY COMPARISON
+    print(f"\n  {'â”€â”€ Speed (feature extraction) â”€â”€'}")
     speed_metrics = [
         ("Feature extraction (s)", 14, False),
         ("Train time (s)",         15, False),
@@ -113,13 +113,13 @@ def main():
             print(f"\n  {'Feature extraction speedup':<30} {'':>12} {speedup:>11.1f}x")
 
     # Top features
-    print(f"\n  {'── Top predictive features ──'}")
+    print(f"\n  {'â”€â”€ Top predictive features â”€â”€'}")
     if pg_row and pg_row[18]:
         try:
             feats = json.loads(pg_row[18]) if isinstance(pg_row[18], str) else pg_row[18]
             print(f"  Postgres top 5:")
             for i, (feat, coef) in enumerate(list(feats.items())[:5]):
-                direction = "↑ risk" if float(coef) > 0 else "↓ risk"
+                direction = "â†‘ risk" if float(coef) > 0 else "â†“ risk"
                 print(f"    {i+1}. {feat:<28} {coef:+.4f}  ({direction})")
         except Exception:
             pass
@@ -129,13 +129,13 @@ def main():
             feats = json.loads(ydb_row[18]) if isinstance(ydb_row[18], str) else ydb_row[18]
             print(f"\n  MUMPS top 5:")
             for i, (feat, coef) in enumerate(list(feats.items())[:5]):
-                direction = "↑ risk" if float(coef) > 0 else "↓ risk"
+                direction = "â†‘ risk" if float(coef) > 0 else "â†“ risk"
                 print(f"    {i+1}. {feat:<28} {coef:+.4f}  ({direction})")
         except Exception:
             pass
 
     # Verdict
-    print(f"\n  {'── Verdict ──'}")
+    print(f"\n  {'â”€â”€ Verdict â”€â”€'}")
     if pg_row and ydb_row:
         auc_diff   = abs(float(pg_row[9] or 0) - float(ydb_row[9] or 0))
         feat_pg    = float(pg_row[14] or 0)
@@ -143,15 +143,15 @@ def main():
 
         if auc_diff < 0.005 and feat_ydb < feat_pg:
             speedup = feat_pg / feat_ydb if feat_ydb > 0 else 0
-            print(f"  ✓ MUMPS: Same accuracy (AUC diff={auc_diff:.4f}), "
+            print(f"  âœ“ MUMPS: Same accuracy (AUC diff={auc_diff:.4f}), "
                   f"{speedup:.1f}x faster feature extraction")
-            print(f"  → Architecture validated: MUMPS is the right data engine")
+            print(f"  â†’ Architecture validated: MUMPS is the right data engine")
         elif auc_diff >= 0.005:
-            print(f"  ⚠ AUC difference: {auc_diff:.4f} — check feature extraction parity")
+            print(f"  âš  AUC difference: {auc_diff:.4f} â€” check feature extraction parity")
         else:
-            print(f"  → Results comparable, timing may vary by run")
+            print(f"  â†’ Results comparable, timing may vary by run")
 
-    print("\n" + "═" * 65 + "\n")
+    print("\n" + "â•" * 65 + "\n")
 
     # Also query the view if it exists
     try:
@@ -168,3 +168,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

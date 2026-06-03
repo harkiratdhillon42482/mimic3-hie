@@ -24,7 +24,7 @@ PG_CONFIG = {
     "port":     5432,
     "dbname":   "MIMICold",
     "user":     "postgres",
-    "password": "Panjwar4633",
+    "password": "YOUR_PASSWORD",
 }
 
 def get_pg():
@@ -400,5 +400,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
